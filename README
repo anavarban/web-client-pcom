@@ -1,0 +1,65 @@
+Protocoale de comunicatie 2022 - Tema 3
+Varban Ana-Maria, 323CD
+
+Pentru implementarea temei am pornit de la scheletul laboratorului 10.
+In fisierul request.c am modificat implementarea functiilor
+astfel:
+    Pentru functia compute_get_request am adaugat un parametru pentru
+    token-ul JWT si l-am adaugat in mesaj.
+    Pentru functia compute_post_request am adaugat un parametru pentru
+    token-ul JWT si am adaptat constructia mesajului pentru cereri de tip
+    application/json.
+De asemenea, am adaugat o functie ce construieste un delete request, 
+identica cu cea pentru get request cu exceptia denumirii.
+
+In fisierul client.c, in functia main, am alocat memorie pentru sirurile de caractere
+ce vor retine comanda data, cookie-ul de sesiune si token-ul JWT.
+In bucla while(1), pornesc conexiunea cu serverul si citesc o comanda de la stdin.
+
+Daca se citeste exit, conexiunea cu serverul se va inchide si se va iesi din bucla.
+
+Daca se citeste register, se va astepta introducerea de username si parola de la tastatura.
+Deoarece credentialele nu pot contine spatii, daca acest lucru se intampla, se va
+afisa un mesaj de eroare.
+Altfel, se va construi payload-ul in format JSON si se va trimite cererea catre server.
+In functie de raspunsul serverului, se va afisa fie un mesaj de succes, fie unul de eroare.
+Daca se citeste login, vom proceda analog comenzii register, fara a mai verifica insa
+daca exista spatii in credentiale, deoarece aceasta verificare s-a facut deja la inregistrare.
+Din raspunsul serverului se va extrage cookie-ul de sesiune, se va salva si se va afisa la stdout
+alaturi de un mesaj de succes.
+
+Daca se citeste enter_library, se va construi un get request folosind cookie-ul de
+sesiune obtinut la login. Daca acesta nu exista, serverul va raspunde cu un mesaj de eroare, 
+altfel se va afisa un mesaj de succes si se va salva si afisa token-ul JWT obtinut.
+
+Daca se citeste get_books, mai intai se vor face verificari preliminare pentru cazul in care 
+utilizatorul nu este logat sau nu a intrat in biblioteca. In urma acestora se vor afisa
+mesaje de eroare specifice. 
+Daca s-au trecut verificarile preliminare, se va construi cererea catre server si in functie
+de raspunsul serverului se va printa la stdout lista de carti sau un mesaj de eroare.
+
+Daca se citeste get_book, se va astepta introducerea unui id si se va proceda analog 
+ca la comanda get_books.
+
+Daca se citeste add_book, se aloca memorie pentru datele cartii si se citesc acestea de la stdin.
+Se verifica daca numarul de pagini este un numar folosind functia atoi(). Aceasta verificare
+se bazeaza pe presupunerea ca nu se va introduce niciodata o carte cu 0 pagini. 
+Daca este trecuta verificarea, se va construi payload-ul in format JSON si se va
+trimite cererea catre server. In functe de raspunsul acestuia, se va afisa fie un
+mesaj de succes, fie unul de eroare.
+
+Daca se citeste delete_book, se citeste un id de la stdin, se verifica daca acesta
+este un numar si, daca se trece de aceasta verificare, se construieste
+cererea de delete similar cu cea de la get_book. In funcie de raspunsul serverului 
+se va afisa fie un mesaj de succes fie unul de eroare.
+
+Daca se citeste logout, se va face mai intai o verificare daca utilizatorul este logat,
+iar daca acestea sunt trecute, se va genera un get request catre server si se va afisa 
+un mesaj adecvat in functie de raspunsul acestuia.
+
+Fiecare citire de la tastatura (pentru comenzi si datele cerute in acestea) este
+insotita de verificari daca se citeste un string vid.
+
+Pentru generarea payloadurilor in format json am folosit biblioteca parson, deoarece
+aceasta era recomandata in enunt. Intr-adevar, a fost usor de folosit.
+
